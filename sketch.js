@@ -12,7 +12,6 @@ var obstaclesGroup, obstacle1, obstacle2, obstacle3, obstacle4, obstacle5, obsta
 var score;
 
 var gameOverImg,restartImg
-var jumpSound , checkPointSound, dieSound
 //
 function preload(){
 
@@ -48,37 +47,71 @@ function setup() {
   
   obstaclesGroup = createGroup();
   cloudsGroup = createGroup();
- 
+
+  gameOver = createSprite(300,70);
+  gameOver.addImage(gameOverImg);
+  gameOver.scale = 0.5;
+  gameOver.visible = false;
+
+  restart = createSprite(300,120);
+  restart.addImage(restartImg);
+  restart.scale = 0.5;
+  restart.visible = false;
+
+  obstaclesGroup = createGroup();
+  cloudsGroup = createGroup();
 }
 
 function draw() {
   //setting the background
   background(255);
   //displaying score
+
+  if(gameState === PLAY){
     if (ground.x < 0){
       ground.x = ground.width/2;
     }
     
     if(keyDown("space")&& trex.y >= 100) {
       // make the player jump
-
+      trex.velocityY = -12; 
     }
     //complete adding the gravity
-    trex.velocityY = trex.velocityY +
+    trex.velocityY = trex.velocityY + 0.8;
+
+    trex.collide(ground);  
     //spawn the clouds
     spawnClouds();
   
     //spawn obstacles on the ground
     spawnObstacles()
   
+  }
+
+  else if(gameState === END){
+    // complete the 2 statements
+   gameOver.visible =    
+  restart.visible =   
+    obstaclesGroup.setVelocityXEach(0);   
+    cloudsGroup.setVelocityXEach(0);   
+    obstaclesGroup.setLifetimeEach(-1); 
+    cloudsGroup.setLifetimeEach(-1); 
+
+    
+    trex.changeAnimation("trex_collided",trex_collided); 
+    if(mousePressedOver()){    
+     
+    }
+  }
+
   drawSprites();
 }
 
 
 function spawnObstacles(){
-  if (frameCount %      0){    
+  if (frameCount % 60 ==  0){    
 //Creat the obstacle sprite at x=800,y=165,w=10,h=40
-    
+var obstacle = createSprite(800,165,10,40); 
     obstacle.velocityX = -6;
      var rand = Math.round(random(1,6));  //sa   4 
      switch(rand) {
@@ -99,6 +132,17 @@ function spawnObstacles(){
      obstacle.scale = 0.5;    
     }
  }
+
+ function reset(){
+  trex.changeAnimation("trex_running",trex_running);//template
+    // complete the 2 statements
+  restart.visible =      
+  gameOver.visible =      
+  cloudsGroup.destroyEach();  
+  obstaclesGroup.destroyEach();  
+  
+}
+
 function spawnClouds() {
   //write code here to spawn the clouds
   if (frameCount % 60 == 0) {
@@ -107,10 +151,6 @@ function spawnClouds() {
     cloud.addImage(cloudImage);
     cloud.scale = 0.5;
     cloud.velocityX = -3;
-    
-    //adjust the depth
-  
-    
     //adding cloud to the group
     cloudsGroup.add(cloud);
   }
