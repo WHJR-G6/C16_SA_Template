@@ -44,7 +44,7 @@ function setup() {
   ground = createSprite(200,180,400,20);
   ground.addImage("ground",groundImage);
   ground.x = ground.width /2;
-  
+  trex.addAnimation("trex_collided",trex_collided);
   obstaclesGroup = createGroup();
   cloudsGroup = createGroup();
 
@@ -67,6 +67,8 @@ function draw() {
   background(255);
   //displaying score
 
+ 
+  trex.collide(ground);  
   if(gameState === PLAY){
     if (ground.x < 0){
       ground.x = ground.width/2;
@@ -79,7 +81,6 @@ function draw() {
     //complete adding the gravity
     trex.velocityY = trex.velocityY + 0.8;
 
-    trex.collide(ground);  
     //spawn the clouds
     spawnClouds();
   
@@ -95,9 +96,7 @@ function draw() {
     obstaclesGroup.setVelocityXEach(0);   
     cloudsGroup.setVelocityXEach(0);   
     obstaclesGroup.setLifetimeEach(-1); 
-    cloudsGroup.setLifetimeEach(-1); 
-
-    
+    cloudsGroup.setLifetimeEach(-1);
     trex.changeAnimation("trex_collided",trex_collided); 
     if(mousePressedOver()){    
      
@@ -113,7 +112,7 @@ function spawnObstacles(){
 //Creat the obstacle sprite at x=800,y=165,w=10,h=40
 var obstacle = createSprite(800,165,10,40); 
     obstacle.velocityX = -6;
-     var rand = Math.round(random(1,6));  //sa   4 
+     var rand = Math.round(random(1,6));  
      switch(rand) {
        case 1: obstacle.addImage(obstacle1);
                break;
@@ -130,11 +129,13 @@ var obstacle = createSprite(800,165,10,40);
        default: break;
      }
      obstacle.scale = 0.5;    
+    obstaclesGroup.add(obstacle);
+
     }
  }
 
  function reset(){
-  trex.changeAnimation("trex_running",trex_running);//template
+  trex.changeAnimation("trex_running",trex_running);
     // complete the 2 statements
   restart.visible =      
   gameOver.visible =      
